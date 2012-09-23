@@ -1,0 +1,12 @@
+{application, slim_sample,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { slim_sample_app, []}},
+  {env, []}
+ ]}.
