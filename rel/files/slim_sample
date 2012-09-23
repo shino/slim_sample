@@ -237,11 +237,19 @@ case "$1" in
                 ;;
         esac
         # Setup beam-required vars
-        ROOTDIR=$RUNNER_BASE_DIR
+        # ROOTDIR=$RUNNER_BASE_DIR
+        SYSTEM_ERL_PATH=`which erl`
+        if [ ! -x "$SYSTEM_ERL_PATH" ]; then
+            echo "Failed to find erl. Is Erlang/OTP available in PATH?"
+            exit 1
+        fi
+        SYSTEM_HOME_BIN=${SYSTEM_ERL_PATH%/*}
+        ROOTDIR=$SYSTEM_HOME_BIN/../lib/erlang
         BINDIR=$ROOTDIR/erts-$ERTS_VSN/bin
         EMU=beam
         PROGNAME=`echo $0 | sed 's/.*\\///'`
-        CMD="$BINDIR/erlexec -boot $RUNNER_BASE_DIR/releases/$APP_VSN/$BOOTFILE -mode embedded -config $CONFIG_PATH -args_file $VMARGS_PATH"
+        SLIM_ARGS="-boot_var RELTOOL_EXT_LIB $RUNNER_BASE_DIR/lib -sasl releases_dir \"$RUNNER_BASE_DIR/releases\""
+        CMD="$BINDIR/erlexec $SLIM_ARGS -boot $RUNNER_BASE_DIR/releases/$APP_VSN/$BOOTFILE -mode embedded -config $CONFIG_PATH -args_file $VMARGS_PATH"
         export EMU
         export ROOTDIR
         export BINDIR
