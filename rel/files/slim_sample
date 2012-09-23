@@ -83,10 +83,18 @@ mkdir -p $USE_DIR/log
 
 
 # Add ERTS bin dir to our path
-ERTS_PATH=$RUNNER_BASE_DIR/erts-$ERTS_VSN/bin
+LOCAL_ERTS_PATH=$RUNNER_BASE_DIR/erts-$ERTS_VSN/bin
+SYSTEM_ERL_PATH=`which erl`
+if [ ! -x "$SYSTEM_ERL_PATH" ]; then
+    echo "Failed to find erl. Is Erlang/OTP available in PATH?"
+    exit 1
+fi
+SYSTEM_HOME_BIN=${SYSTEM_ERL_PATH%/*}
+ROOTDIR=$SYSTEM_HOME_BIN/../lib/erlang
+ERTS_PATH=$ROOTDIR/erts-$ERTS_VSN/bin
 
 # Setup command to control the node
-NODETOOL="$ERTS_PATH/escript $ERTS_PATH/nodetool $NAME_ARG $COOKIE_ARG"
+NODETOOL="$ERTS_PATH/escript $LOCAL_ERTS_PATH/nodetool $NAME_ARG $COOKIE_ARG"
 
 # Setup remote shell command to control node
 REMSH="$ERTS_PATH/erl $REMSH_NAME_ARG $REMSH_REMSH_ARG $COOKIE_ARG"
@@ -238,14 +246,7 @@ case "$1" in
         esac
         # Setup beam-required vars
         # ROOTDIR=$RUNNER_BASE_DIR
-        SYSTEM_ERL_PATH=`which erl`
-        if [ ! -x "$SYSTEM_ERL_PATH" ]; then
-            echo "Failed to find erl. Is Erlang/OTP available in PATH?"
-            exit 1
-        fi
-        SYSTEM_HOME_BIN=${SYSTEM_ERL_PATH%/*}
-        ROOTDIR=$SYSTEM_HOME_BIN/../lib/erlang
-        BINDIR=$ROOTDIR/erts-$ERTS_VSN/bin
+        BINDIR=$ERTS_PATH
         EMU=beam
         PROGNAME=`echo $0 | sed 's/.*\\///'`
         SLIM_ARGS="-boot_var RELTOOL_EXT_LIB $RUNNER_BASE_DIR/lib -sasl releases_dir \"$RUNNER_BASE_DIR/releases\""
