@@ -275,11 +275,11 @@ case "$1" in
         FOREGROUNDOPTIONS="-noinput +Bd"
 
         # Setup beam-required vars
-        ROOTDIR=$RUNNER_BASE_DIR
-        BINDIR=$ROOTDIR/erts-$ERTS_VSN/bin
+        BINDIR=$ERTS_PATH
         EMU=beam
         PROGNAME=`echo $0 | sed 's/.*\///'`
-        CMD="$BINDIR/erlexec $FOREGROUNDOPTIONS -boot $RUNNER_BASE_DIR/releases/$APP_VSN/$BOOTFILE -config $CONFIG_PATH -args_file $VMARGS_PATH"
+        SLIM_ARGS="-boot_var RELTOOL_EXT_LIB $RUNNER_BASE_DIR/lib -sasl releases_dir \"$RUNNER_BASE_DIR/releases\""
+        CMD="$BINDIR/erlexec $SLIM_ARGS $FOREGROUNDOPTIONS -boot $RUNNER_BASE_DIR/releases/$APP_VSN/$BOOTFILE -config $CONFIG_PATH -args_file $VMARGS_PATH"
         export EMU
         export ROOTDIR
         export BINDIR
