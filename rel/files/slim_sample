@@ -137,11 +137,12 @@ case "$1" in
                 PID=`ps -efW|grep "$RUNNER_BASE_DIR/.*/[b]eam"|awk '{print $2}'`
                 ;;
         esac
-        $NODETOOL stop
-        ES=$?
-        if [ "$ES" -ne 0 ]; then
-            exit $ES
-        fi
+        # $NODETOOL stop
+        # ES=$?
+        # if [ "$ES" -ne 0 ]; then
+        #     exit $ES
+        # fi
+        echo $PID
         while `kill -0 $PID 2>/dev/null`;
         do
             sleep 1
